@@ -11,6 +11,7 @@ class ApiError extends Error {
 
 async function request(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`
+  console.log('🚀 Fazendo requisição para:', url)
 
   const headers = {
     'Content-Type': 'application/json',

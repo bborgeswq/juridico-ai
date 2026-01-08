@@ -1,71 +1,319 @@
-import Logo from '../components/ui/Logo'
-import RegisterForm from '../components/auth/RegisterForm'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Logo, Button, Input, Checkbox } from '../components/ui'
+import { useAuth } from '../hooks/useAuth'
+import {
+  isValidEmail,
+  isValidPassword,
+  isValidCPF,
+  isValidFullName,
+  formatCPF,
+} from '../utils/validators'
 
 export default function Register() {
+  const navigate = useNavigate()
+  const { register, loading } = useAuth()
+
+  const [formData, setFormData] = useState({
+    full_name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    cpf: '',
+    oab: '',
+    acceptTerms: false,
+  })
+
+  const [errors, setErrors] = useState({})
+  const [apiError, setApiError] = useState('')
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target
+    let processedValue = type === 'checkbox' ? checked : value
+
+    if (name === 'cpf') {
+      processedValue = formatCPF(value)
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: processedValue,
+    }))
+
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }))
+    }
+    setApiError('')
+  }
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = 'Nome completo é obrigatório'
+    } else if (!isValidFullName(formData.full_name)) {
+      newErrors.full_name = 'Digite seu nome completo'
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email é obrigatório'
+    } else if (!isValidEmail(formData.email)) {
+      newErrors.email = 'Email inválido'
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Senha é obrigatória'
+    } else if (!isValidPassword(formData.password)) {
+      newErrors.password = 'Mínimo 8 caracteres'
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Confirme sua senha'
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Senhas não coincidem'
+    }
+
+    if (!formData.cpf.trim()) {
+      newErrors.cpf = 'CPF é obrigatório'
+    } else if (!isValidCPF(formData.cpf)) {
+      newErrors.cpf = 'CPF inválido'
+    }
+
+    if (!formData.acceptTerms) {
+      newErrors.acceptTerms = 'Aceite os termos'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!validateForm()) return
+
+    const result = await register({
+      full_name: formData.full_name,
+      email: formData.email,
+      password: formData.password,
+      cpf: formData.cpf,
+      oab: formData.oab || undefined,
+    })
+
+    if (result.success) {
+      navigate('/dashboard')
+    } else {
+      setApiError(result.error || 'Erro ao criar conta. Tente novamente.')
+    }
+  }
+
+  // Styles
+  const pageStyle = {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '24px',
+    backgroundColor: '#FFFFFF',
+  }
+
+  const containerStyle = {
+    width: '100%',
+    maxWidth: '480px',
+    margin: '0 auto',
+  }
+
+  const logoContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '32px',
+  }
+
+  const headlineStyle = {
+    fontFamily: 'var(--font-display)',
+    fontSize: '32px',
+    fontWeight: '600',
+    color: '#1A1A1A',
+    textAlign: 'center',
+    marginBottom: '8px',
+  }
+
+  const subheadlineStyle = {
+    fontSize: '16px',
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: '32px',
+  }
+
+  const accentStyle = {
+    color: '#C9A227',
+    fontWeight: '600',
+  }
+
+  const formStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  }
+
+  const errorBoxStyle = {
+    padding: '16px',
+    backgroundColor: '#FEF2F2',
+    border: '1px solid rgba(185, 28, 28, 0.2)',
+    borderRadius: '8px',
+    color: '#B91C1C',
+    fontSize: '14px',
+  }
+
+  const rowStyle = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '16px',
+  }
+
+  const termsErrorStyle = {
+    fontSize: '14px',
+    color: '#B91C1C',
+    marginTop: '4px',
+  }
+
+  const footerTextStyle = {
+    textAlign: 'center',
+    fontSize: '14px',
+    color: '#666666',
+    marginTop: '24px',
+  }
+
+  const footerLinkStyle = {
+    color: '#1E3A5F',
+    fontWeight: '500',
+    textDecoration: 'none',
+  }
+
+  const copyrightStyle = {
+    textAlign: 'center',
+    fontSize: '14px',
+    color: '#999999',
+    marginTop: '32px',
+  }
+
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Left side - Branding (hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-96 h-96 border border-accent/30 rounded-full" />
-          <div className="absolute bottom-20 right-20 w-64 h-64 border border-accent/20 rounded-full" />
-          <div className="absolute top-1/2 left-1/3 w-48 h-48 border border-accent/40 rounded-full" />
+    <div style={pageStyle}>
+      <div style={containerStyle}>
+        <div style={logoContainerStyle}>
+          <Logo size="lg" />
         </div>
-        <div className="relative z-10 flex flex-col justify-center px-16 text-text-inverse">
-          <h1 className="font-display text-5xl font-semibold leading-tight mb-6">
-            Comece a criar<br />
-            <span className="text-accent">agora</span>
-          </h1>
-          <p className="text-lg opacity-80 max-w-md leading-relaxed">
-            Junte-se a centenas de advogados que já estão economizando tempo
-            com a geração inteligente de peças jurídicas.
-          </p>
-          <div className="mt-12 p-6 bg-surface/10 backdrop-blur-sm rounded-[var(--radius-lg)] border border-text-inverse/10">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <p className="font-medium text-text-inverse">7 dias grátis</p>
-                <p className="text-sm opacity-60">Sem cartão de crédito</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <div>
-                <p className="font-medium text-text-inverse">Acesso imediato</p>
-                <p className="text-sm opacity-60">Comece a usar agora</p>
-              </div>
-            </div>
+
+        <h1 style={headlineStyle}>Crie sua conta</h1>
+        <p style={subheadlineStyle}>
+          <span style={accentStyle}>7 dias grátis</span> para testar
+        </p>
+
+        <form onSubmit={handleSubmit} style={formStyle}>
+          {apiError && (
+            <div style={errorBoxStyle}>{apiError}</div>
+          )}
+
+          <Input
+            label="Nome completo"
+            type="text"
+            name="full_name"
+            placeholder="João da Silva"
+            value={formData.full_name}
+            onChange={handleChange}
+            error={errors.full_name}
+            autoComplete="name"
+          />
+
+          <Input
+            label="Email"
+            type="email"
+            name="email"
+            placeholder="seu@email.com"
+            value={formData.email}
+            onChange={handleChange}
+            error={errors.email}
+            autoComplete="email"
+          />
+
+          <div style={rowStyle}>
+            <Input
+              label="Senha"
+              type="password"
+              name="password"
+              placeholder="Mínimo 8 caracteres"
+              value={formData.password}
+              onChange={handleChange}
+              error={errors.password}
+              autoComplete="new-password"
+            />
+            <Input
+              label="Confirmar senha"
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirme a senha"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              error={errors.confirmPassword}
+              autoComplete="new-password"
+            />
           </div>
-        </div>
-      </div>
 
-      {/* Right side - Form */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-12 lg:px-16 xl:px-24 py-12">
-        <div className="w-full max-w-md mx-auto">
-          <div className="mb-8">
-            <Logo size="lg" className="mb-8" />
-            <h2 className="font-display text-3xl font-semibold text-text-primary">
-              Crie sua conta
-            </h2>
-            <p className="mt-2 text-text-secondary">
-              <span className="text-accent font-medium">7 dias grátis</span> para testar
-            </p>
+          <div style={rowStyle}>
+            <Input
+              label="CPF"
+              type="text"
+              name="cpf"
+              placeholder="000.000.000-00"
+              value={formData.cpf}
+              onChange={handleChange}
+              error={errors.cpf}
+              maxLength={14}
+            />
+            <Input
+              label="OAB (opcional)"
+              type="text"
+              name="oab"
+              placeholder="Ex: SP123456"
+              value={formData.oab}
+              onChange={handleChange}
+              error={errors.oab}
+            />
           </div>
 
-          <RegisterForm />
+          <div>
+            <Checkbox
+              name="acceptTerms"
+              label={
+                <span>
+                  Li e aceito os{' '}
+                  <a href="/terms" style={{ color: '#1E3A5F' }}>Termos de Uso</a>
+                  {' '}e{' '}
+                  <a href="/privacy" style={{ color: '#1E3A5F' }}>Política de Privacidade</a>
+                </span>
+              }
+              checked={formData.acceptTerms}
+              onChange={handleChange}
+            />
+            {errors.acceptTerms && (
+              <p style={termsErrorStyle}>{errors.acceptTerms}</p>
+            )}
+          </div>
 
-          <footer className="mt-8 text-center text-text-muted text-sm">
-            © 2024 Minutar AI
-          </footer>
-        </div>
+          <div style={{ marginTop: '8px' }}>
+            <Button type="submit" fullWidth loading={loading}>
+              Criar conta
+            </Button>
+          </div>
+        </form>
+
+        <p style={footerTextStyle}>
+          Já tem conta?{' '}
+          <Link to="/login" style={footerLinkStyle}>
+            Faça login
+          </Link>
+        </p>
+
+        <p style={copyrightStyle}>© 2024 Minutar AI</p>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || ''
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://n8n.jaimemartinsadvocacia.space'
 
 class ApiError extends Error {
   constructor(message, status, data) {

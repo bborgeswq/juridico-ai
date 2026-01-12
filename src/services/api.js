@@ -69,6 +69,21 @@ export const api = {
     method: 'POST',
   }),
 
+  // Documents endpoints
+  registerDocument: (data) => request('/webhook/documents/register', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+
+  listDocuments: () => request('/webhook/documents/list', {
+    method: 'GET',
+  }),
+
+  deleteDocument: (documentId) => request('/webhook/documents/delete', {
+    method: 'DELETE',
+    body: JSON.stringify({ document_id: documentId }),
+  }),
+
   // Helper to save auth data
   saveAuthData: (data) => {
     if (data.access_token) {

@@ -1,41 +1,85 @@
-import { Card, Button } from '../components/ui'
+import { Button } from '../components/ui'
 
 export default function Templates() {
+  const cardStyle = {
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E5E5E5',
+    borderRadius: '12px',
+    padding: '64px 24px',
+    textAlign: 'center',
+  }
+
+  const iconContainerStyle = {
+    width: '80px',
+    height: '80px',
+    backgroundColor: '#FAFAFA',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '0 auto 24px',
+  }
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '24px',
+      }}>
         <div>
-          <h2 className="font-display text-2xl font-semibold text-text-primary">
+          <h2 style={{
+            fontFamily: '"Fraunces", Georgia, serif',
+            fontSize: '24px',
+            fontWeight: 600,
+            color: '#1A1A1A',
+            marginBottom: '4px',
+            whiteSpace: 'nowrap',
+          }}>
             Templates
           </h2>
-          <p className="text-text-secondary mt-1">
+          <p style={{ fontSize: '14px', color: '#666666' }}>
             Modelos personalizados para suas peças
           </p>
         </div>
         <Button disabled>
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg style={{ width: 20, height: 20 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           Novo template
         </Button>
       </div>
 
-      <Card className="text-center py-16">
-        <div className="w-20 h-20 bg-surface-hover rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg className="w-10 h-10 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div style={cardStyle}>
+        <div style={iconContainerStyle}>
+          <svg style={{ width: 40, height: 40, color: '#666666' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
           </svg>
         </div>
-        <h3 className="font-display text-xl font-semibold text-text-primary mb-2">
-          Nenhum template configurado
+        <h3 style={{
+          fontFamily: '"Fraunces", Georgia, serif',
+          fontSize: '20px',
+          fontWeight: 600,
+          color: '#1A1A1A',
+          marginBottom: '8px',
+          whiteSpace: 'nowrap',
+        }}>
+          Em breve
         </h3>
-        <p className="text-text-secondary mb-6 max-w-md mx-auto">
+        <p style={{
+          fontSize: '14px',
+          color: '#666666',
+          maxWidth: '400px',
+          margin: '0 auto 24px',
+        }}>
           Crie templates personalizados para acelerar a geração de suas peças jurídicas.
+          Esta funcionalidade estará disponível em breve.
         </p>
         <Button size="lg" disabled>
-          Em breve
+          Aguarde novidades
         </Button>
-      </Card>
+      </div>
     </div>
   )
 }

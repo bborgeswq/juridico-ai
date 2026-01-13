@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Header from './Header'
@@ -14,25 +14,33 @@ const pageTitles = {
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const location = useLocation()
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const pageTitle = pageTitles[location.pathname] || 'Dashboard'
 
   return (
-    <div className="min-h-screen bg-background flex">
-      <Sidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#FFFFFF' }}>
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header
-          title={pageTitle}
-          onMenuClick={() => setSidebarOpen(true)}
-        />
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        marginLeft: isMobile ? 0 : '256px',
+        minWidth: 0,
+      }}>
+        <Header title={pageTitle} onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="flex-1 p-4 lg:p-8">
-          <div className="max-w-6xl mx-auto page-enter">
+        <main style={{ flex: 1, padding: '24px' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <Outlet />
           </div>
         </main>

@@ -155,7 +155,7 @@ export default function NewPiece() {
               Selecione os documentos que serão usados como base para a geração
             </p>
 
-            {documents.length === 0 ? (
+            {!Array.isArray(documents) || documents.length === 0 ? (
               <div style={{
                 padding: '32px',
                 textAlign: 'center',
@@ -175,7 +175,7 @@ export default function NewPiece() {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {documents.map(doc => (
+                {Array.isArray(documents) && documents.map(doc => (
                   <div
                     key={doc.id}
                     style={docItemStyle(formData.selectedDocuments.includes(doc.id))}

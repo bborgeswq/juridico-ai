@@ -310,14 +310,14 @@ export default function Documents() {
       {/* Lista de Documentos */}
       <div>
         <h2 style={listHeaderStyle}>
-          Seus documentos ({documents.length})
+          Seus documentos ({Array.isArray(documents) ? documents.length : 0})
         </h2>
 
-        {loading && documents.length === 0 ? (
+        {loading && (!Array.isArray(documents) || documents.length === 0) ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '48px' }}>
             <Loading />
           </div>
-        ) : documents.length === 0 ? (
+        ) : !Array.isArray(documents) || documents.length === 0 ? (
           <Card style={emptyStateStyle}>
             <div style={emptyIconStyle}>
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#999999" strokeWidth="1.5">
@@ -333,7 +333,7 @@ export default function Documents() {
           </Card>
         ) : (
           <div>
-            {documents.map((doc) => (
+            {Array.isArray(documents) && documents.map((doc) => (
               <div key={doc.id} style={documentItemStyle}>
                 <div style={documentInfoStyle}>
                   <div style={pdfIconStyle}>

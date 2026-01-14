@@ -15,11 +15,18 @@ export function useDocuments() {
     setError(null)
     try {
       const response = await api.listDocuments()
-      if (response.success) {
-        setDocuments(response.data?.documents || [])
+      if (response.success && Array.isArray(response.data?.documents)) {
+        setDocuments(response.data.documents)
+      } else if (response.success && Array.isArray(response.data)) {
+        setDocuments(response.data)
+      } else if (response.success && Array.isArray(response.documents)) {
+        setDocuments(response.documents)
+      } else {
+        setDocuments([])
       }
     } catch (err) {
       setError(err.message)
+      setDocuments([])
     } finally {
       setLoading(false)
     }
